@@ -13,6 +13,9 @@
 @interface VBPiePieceData : NSObject
 @property (nonatomic) NSInteger index;
 @property (nonatomic, retain) NSString *name;
+@property (nonatomic, retain) NSString *iconimgname; // Added icon property
+@property (nonatomic) CGFloat iconWidth;
+@property (nonatomic) CGFloat iconHeight;
 @property (nonatomic, retain) NSNumber *value;
 @property (nonatomic, retain) UIColor *color;
 @property (nonatomic, retain) UIColor *labelColor;

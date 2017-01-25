@@ -33,6 +33,19 @@
 @property (nonatomic, strong) NSString *pieceName;
 
 /*!
+ icon image name will be set from chartValues of VBPieChart instance or value of current instance.
+ */
+@property (nonatomic, strong) NSString *iconImageName;
+/*!
+ icon image width will be set from chartValues of VBPieChart instance or value of current instance.
+ */
+@property (nonatomic) CGFloat iconImgWidth;
+/*!
+ icon image height will be set from chartValues of VBPieChart instance or value of current instance.
+ */
+@property (nonatomic) CGFloat iconImgHeight;
+
+/*!
  Start angle for segment
  */
 @property (nonatomic, readonly) double startAngle;
@@ -60,5 +73,7 @@
  Can be overwritten to present another type of chart
  */
 - (CGMutablePathRef) generatePath;
+
+@property (nonatomic, retain) CALayer *insertingthelayer;
 
 @end

@@ -68,7 +68,7 @@
         } else if (color && [color isKindOfClass:[UIColor class]]) {
             data.color = color;
         }
-
+        
         if (!data.color) {
             data.color = [self defaultColors:arc4random() % 10];
         }
@@ -142,6 +142,7 @@
     self.label.alignmentMode = kCAAlignmentCenter;
     self.label.foregroundColor = [UIColor whiteColor].CGColor;
     self.label.contentsScale = [UIScreen mainScreen].scale;
+    
     return self;
 }
 
@@ -154,6 +155,10 @@
     }
     [self setLabelColor:data.labelColor];
     [self setPieceName:data.name];
+    [self setIconImageName:data.iconimgname];
+    [self setIconImageWidth:data.iconWidth];
+    [self setIconImageHeight:data.iconHeight];
+    
     if (data.color) {
         self.fillColor = data.color.CGColor;
     }
@@ -179,6 +184,18 @@
     if (_labelsPosition != VBLabelsPositionNone) {
         [self.label setString:_pieceName];
     }
+}
+
+- (void) setIconImageName:(NSString *)iconImageName {
+    _iconImageName = iconImageName;
+}
+
+- (void) setIconImageWidth:(CGFloat)iconImageWidth {
+    _iconImgWidth = iconImageWidth;
+}
+
+- (void) setIconImageHeight:(CGFloat)iconImageHeight {
+    _iconImgHeight = iconImageHeight;
 }
 
 - (void) setAccentPrecent:(double)accentPrecent {
@@ -372,7 +389,7 @@
                               delegate:self];
         [self __outerRadius:_innerRadius];
     }
-
+    
     if (_animationOptions & VBPieChartAnimationGrowth || _animationOptions & VBPieChartAnimationGrowthAll) {
         temp_innerRadius = _innerRadius;
         [self createArcAnimationForKey:@"innerRadius"
@@ -381,7 +398,7 @@
                               delegate:self];
         [self __innerRadius:_outerRadius];
     }
-
+    
     // Create a transaction just to disable implicit animations
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
@@ -405,9 +422,9 @@
         group.repeatCount = 0;
         group.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
         group.animations = @[endAngleAnimation, startAngleAnimation];
-
+        
         [group setDelegate:self];
-    
+        
         [self addAnimation:group forKey:@"groupAnimation"];
         [self setValue:@(angle) forKey:@"endAngle"];
         [self setValue:@(startAngle) forKey:@"startAngle"];
@@ -434,7 +451,7 @@
         CGSize size = self.frame.size;
         CGSize superSize = self.superlayer.frame.size;
         CGPoint center = [self centroid];
-
+        
         VBLabelsPosition lp = _labelsPosition;
         
         switch (lp) {
@@ -463,7 +480,7 @@
         // pythagorean theorem for hypotenuse
         
         CGSize labelSize = [_pieceName sizeWithAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:self.label.fontSize]}];
-
+        
         // TODO: "need to do something with it, can't be just magic number"
         if (labelSize.width > 50) {
             labelSize.width = 50;
@@ -471,21 +488,38 @@
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
         
-        
         [self.label setFrame:CGRectMake(0, 0, labelSize.width, labelSize.height)];
+        
+        float iconWidth = _iconImgWidth;
+        float iconHeight = _iconImgHeight;
         
         if (!_label.superlayer) {
             [self.superlayer addSublayer:_label];
+            UIImage *imag = [UIImage imageNamed:_iconImageName];
+            UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0,0 , iconWidth, iconHeight)];
+            [iv setImage:imag];
+            [iv sizeToFit];
+            iv.contentMode = UIViewContentModeScaleAspectFit;
+            iv.translatesAutoresizingMaskIntoConstraints = NO;
+            
+            _insertingthelayer = iv.layer;
+            _insertingthelayer.bounds = CGRectMake(center.x, center.y, iconWidth, iconHeight);
+            _insertingthelayer.masksToBounds = YES;
+            
+            [self.superlayer  addSublayer:_insertingthelayer];
+            
         }
+        
+        [_insertingthelayer setPosition:CGPointMake(center.x - iconWidth, center.y)];
+        
         [self.label setPosition:center];
         [self.label setHidden:NO];
         [CATransaction commit];
     }
 }
 
-
 - (BOOL) animateToAccent:(double)accentPrecent {
-
+    
     if ([[self animationKeys] count] != 0) {
         return NO;
     }
@@ -506,10 +540,10 @@
     
     CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
     animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-	animation.repeatCount = 0;
+    animation.repeatCount = 0;
     animation.duration = [CATransaction animationDuration];
-	animation.fromValue = (__bridge id)self.path;
-	animation.toValue = (__bridge id)path;
+    animation.fromValue = (__bridge id)self.path;
+    animation.toValue = (__bridge id)path;
     animation.delegate = self;
     [self addAnimation:animation forKey:@"animatePath"];
     
@@ -529,7 +563,9 @@
 }
 
 - (NSString *) description {
-    return [NSString stringWithFormat:@"<VBPiePiece: %p, _startAngle=%f, _endAngle=%f>", self, _startAngle, _endAngle];
+    CGPoint center = CGPointMake(self.label.frame.size.width/2, self.label.frame.size.height/2);
+    return [NSString stringWithFormat:@"<VBPiePiece: %p, _startAngle=%f, _endAngle=%f>, label.center: %f/%f , radii: %f/%f center %f/%f", self, _startAngle, _endAngle, self.label.bounds.size.width/2, self.label.bounds.size.height/2, self.label.position.x, self.label.position.y, center.x, center.y ];
+    
 }
 
 - (void) __startAngle:(double)startAngle {
@@ -564,5 +600,31 @@
         self.label = nil;
     }
 }
+
+// Distance from two points
+- (CGFloat)aPifag:(CGPoint )p1 p2:(CGPoint )p2 {
+    CGFloat xDist = (p2.x - p1.x);
+    CGFloat yDist = (p2.y - p1.y);
+    CGFloat distance = sqrt((xDist * xDist) + (yDist * yDist));
+    return distance;
+}
+
+
+
+// Point 2 from distance
+- (CGPoint)pointByDistance:(CGPoint )p1 distance:(CGFloat)dist angle:(double)Ang {
+    float x2 = p1.x + cos(Ang) * dist;
+    float y2 = p1.y - sin(Ang) * dist;
+    CGPoint point2 = CGPointMake(x2, y2);
+    return point2;
+    
+    
+    
+    
+    
+}
+
+
+
 
 @end
