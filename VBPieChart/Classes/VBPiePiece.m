@@ -220,6 +220,11 @@
     _iconImgHeight = iconImageHeight;
 }
 
+- (void) setIconImageOffset:(CGFloat)iconImageOffset {
+    _iconImgOffset = iconImageOffset;
+}
+
+
 - (void) setAccentPrecent:(double)accentPrecent {
     _accentPrecent = accentPrecent;
     _accent = YES;
@@ -514,6 +519,7 @@
         
         float iconWidth = _iconImgWidth;
         float iconHeight = _iconImgHeight;
+        float iconOffset = _iconImgOffset;
         
         if (!_label.superlayer) {
             [self.superlayer addSublayer:_label];
@@ -538,7 +544,7 @@
             
         }
         
-        [_insertingthelayer setPosition:CGPointMake(center.x - iconWidth, center.y)];
+        [_insertingthelayer setPosition:CGPointMake(center.x - _iconImgOffset, center.y)];
         
         [self.label setPosition:center];
         [self.label setHidden:NO];

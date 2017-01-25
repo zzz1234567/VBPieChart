@@ -44,6 +44,10 @@
  icon image height will be set from chartValues of VBPieChart instance or value of current instance.
  */
 @property (nonatomic) CGFloat iconImgHeight;
+/*!
+ icon image offset height will be set from chartValues of VBPieChart instance or value of current instance.
+ */
+@property (nonatomic) CGFloat iconImgOffset;
 
 /*!
  Start angle for segment
