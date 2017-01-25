@@ -519,7 +519,6 @@
         
         float iconWidth = _iconImgWidth;
         float iconHeight = _iconImgHeight;
-        float iconOffset = _iconImgOffset;
         
         if (!_label.superlayer) {
             [self.superlayer addSublayer:_label];
