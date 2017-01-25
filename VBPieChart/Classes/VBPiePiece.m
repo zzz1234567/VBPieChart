@@ -96,6 +96,7 @@
         data.iconimgname = options[@"iconimgname"];
         data.iconWidth = [options[@"iconWidth"] floatValue];
         data.iconHeight = [options[@"iconHeight"] floatValue];
+        data.iconOffset = [options[@"iconOffset"] floatValue];
         
         id iconColor = options[@"iconColor"];
         if (iconColor && [iconColor isKindOfClass:[NSString class]]) {
@@ -174,6 +175,7 @@
     [self setIconImageName:data.iconimgname];
     [self setIconImageWidth:data.iconWidth];
     [self setIconImageHeight:data.iconHeight];
+    [self setIconImageOffset:data.iconOffset];
     [self setIconColor:data.iconColor];
     
     if (data.color) {

@@ -16,6 +16,7 @@
 @property (nonatomic, retain) NSString *iconimgname; // Added icon property
 @property (nonatomic) CGFloat iconWidth;
 @property (nonatomic) CGFloat iconHeight;
+@property (nonatomic) CGFloat iconOffset;
 @property (nonatomic, retain) UIColor *iconColor;
 @property (nonatomic, retain) NSNumber *value;
 @property (nonatomic, retain) UIColor *color;
