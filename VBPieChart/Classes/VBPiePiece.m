@@ -495,18 +495,22 @@
         
         if (!_label.superlayer) {
             [self.superlayer addSublayer:_label];
-            UIImage *imag = [UIImage imageNamed:_iconImageName];
-            UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0,0 , iconWidth, iconHeight)];
-            [iv setImage:imag];
-            [iv sizeToFit];
-            iv.contentMode = UIViewContentModeScaleAspectFit;
-            iv.translatesAutoresizingMaskIntoConstraints = NO;
             
-            _insertingthelayer = iv.layer;
-            _insertingthelayer.bounds = CGRectMake(center.x, center.y, iconWidth, iconHeight);
-            _insertingthelayer.masksToBounds = YES;
+            if (!_insertingthelayer.superlayer && _iconImageName) {
+                UIImage *imag = [UIImage imageNamed:_iconImageName];
+                UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(0,0 , iconWidth, iconHeight)];
+                [iv setImage:imag];
+                [iv sizeToFit];
+                iv.contentMode = UIViewContentModeScaleAspectFit;
+                iv.translatesAutoresizingMaskIntoConstraints = NO;
+                
+                _insertingthelayer = iv.layer;
+                _insertingthelayer.bounds = CGRectMake(center.x, center.y, iconWidth, iconHeight);
+                _insertingthelayer.masksToBounds = YES;
+                
+                [self.superlayer  addSublayer:_insertingthelayer];
+            }
             
-            [self.superlayer  addSublayer:_insertingthelayer];
             
         }
         
