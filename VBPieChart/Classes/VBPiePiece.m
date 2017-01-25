@@ -92,6 +92,21 @@
         
         
         data.accent = [options[@"accent"] boolValue];
+        
+        data.iconimgname = options[@"iconimgname"];
+        data.iconWidth = [options[@"iconWidth"] floatValue];
+        data.iconHeight = [options[@"iconHeight"] floatValue];
+        
+        id iconColor = options[@"iconColor"];
+        if (iconColor && [iconColor isKindOfClass:[NSString class]]) {
+            data.iconColor = [UIColor colorWithHexString:iconColor];
+        } else if (iconColor && [iconColor isKindOfClass:[UIColor class]]) {
+            data.iconColor = iconColor;
+        }
+        if (!data.iconColor) {
+            data.iconColor = [UIColor whiteColor];
+        }
+
     } else {
         data.value = (NSNumber*)object;
         data.color = [self defaultColors:arc4random() % 10];
@@ -118,6 +133,7 @@
 
 @property (nonatomic, strong) CATextLayer *label;
 @property (nonatomic, strong) UIColor *labelColor;
+@property (nonatomic, strong) UIColor *iconColor;
 
 @property (nonatomic, copy) VBLabelBlock labelBlock;
 
@@ -158,6 +174,7 @@
     [self setIconImageName:data.iconimgname];
     [self setIconImageWidth:data.iconWidth];
     [self setIconImageHeight:data.iconHeight];
+    [self setIconColor:data.iconColor];
     
     if (data.color) {
         self.fillColor = data.color.CGColor;
@@ -165,6 +182,7 @@
     if (data.strokeColor) {
         self.strokeColor = data.strokeColor.CGColor;
     }
+    
 }
 
 - (CGPoint) centroid {
@@ -177,6 +195,10 @@
 - (void)setLabelColor:(UIColor *)labelColor {
     _labelColor = labelColor;
     _label.foregroundColor = labelColor.CGColor;
+}
+
+- (void)setIconColor:(UIColor *)iconColor {
+    _iconColor = iconColor;
 }
 
 - (void) setPieceName:(NSString *)pieceName {
@@ -503,6 +525,8 @@
                 [iv sizeToFit];
                 iv.contentMode = UIViewContentModeScaleAspectFit;
                 iv.translatesAutoresizingMaskIntoConstraints = NO;
+                iv.image = [iv.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                [iv setTintColor:_iconColor];
                 
                 _insertingthelayer = iv.layer;
                 _insertingthelayer.bounds = CGRectMake(center.x, center.y, iconWidth, iconHeight);
